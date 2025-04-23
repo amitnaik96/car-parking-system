@@ -1,4 +1,5 @@
-## **Car Parking System API**
+## **Car Parking System API**  
+This is a RESTful API built using **NestJS** that simulates a car parking lot management system.
 
 ## **Installation**  
 ### **Local**
@@ -36,6 +37,6 @@
 Visit `http://localhost:3000/api/docs` for the documentation 
 
 ### **Deployed**
-**Has been deployed at render(free) may get rate limited**
+- **Has been deployed at render(free) may get rate limited**  
 `https://car-parking-system-73rd.onrender.com/api/docs`
 
