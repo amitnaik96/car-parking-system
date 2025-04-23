@@ -107,6 +107,21 @@ export class ParkingController {
     getStatus() {
         return this.parkingService.getParkingStatus();
     }
+
+    @Get('/slot')
+    getSlot(@Body('registration_number') regNo: string) {
+        try {
+            return this.parkingService.getSlotNumberByRegNo(regNo);
+        } catch (err) {
+            throw new HttpException(
+                {
+                    status: HttpStatus.BAD_REQUEST,  
+                    error: err.message, 
+                },
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+    }
 }
 
 

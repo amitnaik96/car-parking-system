@@ -154,4 +154,20 @@ describe('ParkingService', () => {
         expect(() => service.getSlotNumberByRegNo('KA123')).toThrow('Car with this registration number KA123 is not parked');
       })
     });
+
+
+    // This test case tests most of services + waitlist logic
+    describe('Waitlist', () => {
+      it('should show KA33 at slot one after being at waitlist', () => {
+        service.initializeParkingLot(2);
+        service.allocateParkingSlot('KA11', 'grey');
+        service.allocateParkingSlot('KA22', 'black');
+        expect(() => service.allocateParkingSlot('KA33', 'black')).toThrow('Parking lot is full. You have been added to waitlist');
+
+        service.clearSlotBySlotNumber(1);
+        // now KA33 should have been alloted;
+        const res = service.getSlotNumberByRegNo('KA33');
+        expect(res.slot_number).toBe(1);
+      }); 
+    });
 });

@@ -129,6 +129,14 @@ export class ParkingService {
         // console.log(this.colorToRegNos);
         // console.log(this.regNoToSlot);
 
+        // O(k) k: no of wainting cars
+        if(this.waitlist.length > 0) {
+            const car = this.waitlist.shift();
+            if(car) {
+                this.allocateParkingSlot(car.regNo, car.color);
+            }
+        }
+
         return { freed_slot_number: slotNumber};
     }
 
@@ -161,6 +169,14 @@ export class ParkingService {
         // console.log(this.slots);
         // console.log(this.colorToRegNos);
         // console.log(this.regNoToSlot)
+
+        // O(k) k: no of wainting cars
+        if(this.waitlist.length > 0) {
+            const car = this.waitlist.shift();
+            if(car) {
+                this.allocateParkingSlot(car.regNo, car.color);
+            }
+        }
 
         return { freed_slot_number: slotNumber};
     }   
