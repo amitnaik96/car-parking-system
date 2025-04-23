@@ -170,17 +170,9 @@ export class ParkingController {
     }
 
     @ApiOperation({ summary: 'Get parking slot by registration number'})
-    @ApiBody({
-        schema: {
-            type: 'object',
-            properties: {
-                registration_number: { type: 'string'}
-            },
-            required: ['registration_number']
-        }
-    })
-    @Get('/slot')
-    getSlot(@Body('registration_number') regNo: string) {
+    @ApiParam({ name: 'registration_number', type: 'string' })
+    @Get('/slot/:registration_number')
+    getSlot(@Param('registration_number') regNo: string) {
         try {
             return this.parkingService.getSlotNumberByRegNo(regNo);
         } catch (err) {
