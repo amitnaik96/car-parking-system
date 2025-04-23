@@ -18,4 +18,15 @@ export class ParkingService {
         this.slots = Array(noOfSlots).fill(null);
         return { total_slot: noOfSlots};
     }
+
+    expandParkingLot(increment: number): {total_slot: number} {
+        if (this.slots.length === 0) {
+            throw new Error('Parking lot is not initialized yet.');
+        }
+        for (let i=0; i<increment; i++) {
+            this.slots.push(null);
+        }
+
+        return { total_slot: this.slots.length}
+    }
 }
