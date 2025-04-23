@@ -1,13 +1,12 @@
 import { Controller, Body, Post, Patch, Param, Get, HttpException, HttpStatus } from '@nestjs/common';
 import { ParkingService } from './parking.service';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam} from '@nestjs/swagger';
 
 @ApiTags('Parking Lot') 
 @Controller()
 export class ParkingController {
     constructor(private readonly parkingService: ParkingService) {}
 
-    @Post('parking_lot')
     @ApiOperation({ summary: 'Initialize the parking lot'})
     @ApiResponse({status: 201, description: 'Parking lot initialized'})
     @ApiResponse({ status: 400, description: 'Parking lot is already initialized'})
@@ -20,6 +19,7 @@ export class ParkingController {
             required: ['no_of_slot']
         }
     })
+    @Post('parking_lot')
     initialize(@Body('no_of_slot') noOfSlots: number) {
         try {
             return this.parkingService.initializeParkingLot(noOfSlots); 
@@ -33,6 +33,19 @@ export class ParkingController {
             );
         }
     }
+
+
+    @ApiOperation({summary: 'Increase the no of parking slots'})
+    @ApiResponse({status: 201, description: 'Parking lot incremented'})
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                increment_slot: { type: 'number'}
+            },
+            required: ['increment_slot']
+        }
+    })
     @Patch('parking_lot')
     expand(@Body('increment_slot') increment: number) {
         try {
@@ -49,6 +62,20 @@ export class ParkingController {
         }
     }
 
+
+
+    @ApiOperation({summary: 'Allocating parking slot to a car'})
+    @ApiResponse({status: 201, description: 'Parking slot alloted'})
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                car_reg_no: {type: 'string', example: 'KA123'},
+                car_color: { type: 'string', example: 'red'}
+            },
+            required: ['car_reg_no', 'car_color']
+        }
+    })
     @Post('park') 
     park(@Body() body: { car_reg_no: string; car_color: string}) {
             
@@ -66,6 +93,10 @@ export class ParkingController {
         }
     }
 
+
+    @ApiOperation({summary: 'Get registration number of cars by color'})
+    @ApiParam({ name: 'color', type: 'string'})
+    @ApiResponse({status: 200, description: "Registration numbers", type: [String]})
     @Get('registration_numbers/:color')
     getRegistrationNumbers(@Param('color') color: string) {
         try {
@@ -81,6 +112,9 @@ export class ParkingController {
         }
     }
 
+    @ApiOperation({summary: 'Get slot number of cars by color'})
+    @ApiParam({ name: 'color', type: 'string'})
+    @ApiResponse({status: 200, description: "Slot numbers", type: [Number]})
     @Get('slot_numbers/:color') 
     getSlotNumbers(@Param('color') color: string) {
         try {
@@ -96,6 +130,17 @@ export class ParkingController {
         }
     }
 
+    @ApiOperation({summary: 'Clear parking slot given regisration number or slot number'})
+    @ApiResponse({status:200, description: 'Slot freed'})
+    @ApiBody({
+        schema : {
+            type: 'object',
+            properties: {
+                'slot_number': {type: 'number'},
+                'car_registration_number': {type: 'string'}
+            }
+        }
+    })
     @Post('clear')
     clearSlot(@Body() body: { slot_number?: number; car_registration_no?: string}) {
         try {
@@ -117,11 +162,23 @@ export class ParkingController {
         }
     }
 
+    @ApiOperation({summary: 'Get parking slot status'})
+    @ApiResponse({status: 200, description: 'Array containing car details in their respective slots'})
     @Get('/status')
     getStatus() {
         return this.parkingService.getParkingStatus();
     }
 
+    @ApiOperation({ summary: 'Get parking slot by registration number'})
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                registration_number: { type: 'string'}
+            },
+            required: ['registration_number']
+        }
+    })
     @Get('/slot')
     getSlot(@Body('registration_number') regNo: string) {
         try {
