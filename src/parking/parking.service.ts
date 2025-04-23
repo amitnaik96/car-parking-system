@@ -53,7 +53,7 @@ export class ParkingService {
         }
 
         const allocatedSlotNumber = availableSlotIndex + 1;
-        const newCar: Car = { regNo: carRegNo, color: carColor};
+        const newCar: Car = { regNo: carRegNo, color: carColor.toLowerCase()};
         this.slots[availableSlotIndex] = newCar;
 
         if(!this.colorToRegNos.has(carColor)) {
