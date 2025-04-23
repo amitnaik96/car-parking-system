@@ -8,7 +8,8 @@ interface Car {
 @Injectable()
 export class ParkingService {
     private slots: (Car | null)[] = [];
-    private colorToRegSlot = new Map<string, Set<{regNo: string, slot: number}>>();
+    private regNoToSlot = new Map<string, number>();
+    private colorToRegNos = new Map<string, Set<string>>();
 
     initializeParkingLot(noOfSlots: number) : {total_slot: number} {
         if(this.slots.length > 0) {
@@ -31,8 +32,11 @@ export class ParkingService {
     }
 
     allocateParkingSlot(carRegNo: string, carColor: string): { allocated_slot_number: number} {
-        const availableSlotIndex = this.slots.findIndex(slot => slot === null);
+        if (this.slots.length === 0) {
+            throw new Error('Parking lot is not initialized yet.');
+        }
 
+        const availableSlotIndex = this.slots.findIndex(slot => slot === null);
         if (availableSlotIndex === -1) {
             throw new Error('Parking lot is full. You have been added to waitlist');
         }
@@ -41,10 +45,15 @@ export class ParkingService {
         const newCar: Car = { regNo: carRegNo, color: carColor};
         this.slots[availableSlotIndex] = newCar;
 
-        if(!this.colorToRegSlot.has(carColor)) {
-            this.colorToRegSlot.set(carColor, new Set());
+        if(!this.colorToRegNos.has(carColor)) {
+            this.colorToRegNos.set(carColor, new Set());
         }
-        this.colorToRegSlot.get(carColor)?.add({regNo: carRegNo, slot: allocatedSlotNumber});
+        this.colorToRegNos.get(carColor)?.add(carRegNo);
+        this.regNoToSlot.set(carRegNo, allocatedSlotNumber);
+
+        console.log(this.slots);
+        console.log(this.colorToRegNos);
+        console.log(this.regNoToSlot)
 
         return { allocated_slot_number : allocatedSlotNumber};
     }
