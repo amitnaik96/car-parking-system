@@ -1,23 +1,112 @@
-import { Controller, Post, Body, Patch } from '@nestjs/common';
+import { Controller, Body, Post, Patch, Param, Get, HttpException, HttpStatus } from '@nestjs/common';
 import { ParkingService } from './parking.service';
 
 @Controller()
 export class ParkingController {
-    constructor(private readonly parkingService: ParkingService) {};
+    constructor(private readonly parkingService: ParkingService) {}
 
     @Post('parking_lot')
     initialize(@Body('no_of_slot') noOfSlots: number) {
-        return this.parkingService.initializeParkingLot(noOfSlots);
+        try {
+            return this.parkingService.initializeParkingLot(noOfSlots); 
+        } catch (err) {
+            throw new HttpException(
+                {
+                    status: HttpStatus.BAD_REQUEST,  
+                    error: err.message, 
+                },
+                HttpStatus.BAD_REQUEST,
+            );
+        }
     }
-
     @Patch('parking_lot')
     expand(@Body('increment_slot') increment: number) {
-        return this.parkingService.expandParkingLot(increment);
-    } 
+        try {
+            return this.parkingService.expandParkingLot(increment);
+
+        } catch (err) {
+            throw new HttpException(
+                {
+                    status: HttpStatus.BAD_REQUEST,  
+                    error: err.message, 
+                },
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+    }
 
     @Post('park') 
     park(@Body() body: { car_reg_no: string; car_color: string}) {
-        const { car_reg_no, car_color} = body;
-        return this.parkingService.allocateParkingSlot(car_reg_no, car_color);
+            
+        try {
+            const { car_reg_no, car_color} = body;
+            return this.parkingService.allocateParkingSlot(car_reg_no, car_color);
+        } catch (err) {
+            throw new HttpException(
+                {
+                    status: HttpStatus.BAD_REQUEST,  
+                    error: err.message, 
+                },
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+    }
+
+    @Get('registration_numbers/:color')
+    getRegistrationNumbers(@Param('color') color: string) {
+        try {
+            return this.parkingService.getRegistrationNumbersByColor(color);
+        } catch (err) {
+            throw new HttpException(
+                {
+                    status: HttpStatus.BAD_REQUEST,  
+                    error: err.message, 
+                },
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+    }
+
+    @Get('slot_numbers/:color') 
+    getSlotNumbers(@Param('color') color: string) {
+        try {
+            return this.parkingService.getSlotNumbersByColor(color);
+        } catch (err) {
+            throw new HttpException(
+                {
+                    status: HttpStatus.BAD_REQUEST,  
+                    error: err.message, 
+                },
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+    }
+
+    @Post('clear')
+    clearSlot(@Body() body: { slot_number?: number; car_registration_no?: string}) {
+        try {
+            if(body.slot_number) {
+                return this.parkingService.clearSlotBySlotNumber(body.slot_number);
+            }
+            else if (body.car_registration_no) {
+                return this.parkingService.clearSlotByRegNo(body.car_registration_no);
+            }
+            else throw new Error('Invalid request: Must provide slot_number or car_registration_no');
+        } catch (err) {
+            throw new HttpException(
+                {
+                    status: HttpStatus.BAD_REQUEST,  
+                    error: err.message, 
+                },
+                HttpStatus.BAD_REQUEST,
+            );
+        }
+    }
+
+    @Get('/status')
+    getStatus() {
+        return this.parkingService.getParkingStatus();
     }
 }
+
+
