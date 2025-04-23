@@ -8,11 +8,11 @@ This is a RESTful API built using **NestJS** that simulates a car parking lot ma
     git clone https://github.com/amitnaik96/car-parking-system.git
     cd car-parking-system
 
-    # install dependencies and add .env file (refer .env.example)
+    # install dependencies 
     npm install
     
-    # run the backend  
-    npm run start:dev
+    # run the server  
+    npm run start
 
     # run the tests
     npm run test
@@ -37,6 +37,6 @@ This is a RESTful API built using **NestJS** that simulates a car parking lot ma
 Visit `http://localhost:3000/api/docs` for the documentation 
 
 ### **Deployed**
-- **Has been deployed at render(free) may get rate limited**  
+- **Has been deployed at render(free) may get rate limited or go down.**  
 `https://car-parking-system-73rd.onrender.com/api/docs`
 
